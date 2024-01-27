@@ -1,6 +1,7 @@
 #include <iostream>
+#include <SDL2/SDL.h>
 
 int main() {
-    std::cout << "Hello, world!" << std::endl;
+    SDL_Init(SDL_INIT_EVERYTHING);
     return 0;
 }
