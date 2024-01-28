@@ -2,8 +2,7 @@
 // Created by Konstantin Skrypak on 28.01.2024.
 //
 
-#ifndef GAME_H
-#define GAME_H
+#pragma once
 
 class Game {
 public:
@@ -24,4 +23,3 @@ public:
     void Destroy();
 };
 
-#endif
