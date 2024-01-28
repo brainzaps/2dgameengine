@@ -21,6 +21,8 @@ public:
 
     void Initialize();
 
+    void Setup();
+
     void Run();
 
     void ProcessInput();

@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include "Game.h"
 
 Game::Game() {
@@ -56,8 +57,13 @@ void Game::Initialize() {
     std::cout << "Game is initialized" << std::endl;
 }
 
+void Game::Setup() {
+    // TODO(Skrypak): Implement
+    std::cout << "Game setup" << std::endl;
+}
+
 void Game::Run() {
-    std::cout << "Game is running" << std::endl;
+    Setup();
 
     while (isRunning) {
         ProcessInput();
@@ -97,6 +103,17 @@ void Game::Render() {
 
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderClear(renderer);
+
+    // Load PNG image
+    SDL_Surface *surface = IMG_Load("./assets/images/tank-tiger-right.png");
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+
+
+    // Render image
+    SDL_Rect sourceRectangle = {10, 10, 32, 32};
+    SDL_RenderCopy(renderer, texture, NULL, &sourceRectangle);
+    SDL_DestroyTexture(texture);
 
     SDL_RenderPresent(renderer);
 }
