@@ -16,6 +16,9 @@ public:
 
     ~Game();
 
+    int windowWidth;
+    int windowHeight;
+
     void Initialize();
 
     void Run();
