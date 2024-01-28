@@ -5,6 +5,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <glm/glm.hpp>
 #include "Game.h"
 
 Game::Game() {
@@ -57,8 +58,13 @@ void Game::Initialize() {
     std::cout << "Game is initialized" << std::endl;
 }
 
+glm::vec2 playerPosition;
+glm::vec2 playerVelocity;
+
 void Game::Setup() {
-    // TODO(Skrypak): Implement
+    playerPosition = glm::vec2(0.0f, 0.0f);
+    playerVelocity = glm::vec2(0.1f, 0.1f);
+
     std::cout << "Game setup" << std::endl;
 }
 
@@ -94,7 +100,13 @@ void Game::ProcessInput() {
 }
 
 void Game::Update() {
-    // TODO(Skrypak): Implement
+
+    while (!SDL_TICKS_PASSED(SDL_GetTicks(), ticksLastFrame + MILLIS_PER_FRAME));
+
+    ticksLastFrame = SDL_GetTicks();
+
+    playerPosition += playerVelocity;
+
     std::cout << "Game update" << std::endl;
 }
 
@@ -111,7 +123,12 @@ void Game::Render() {
 
 
     // Render image
-    SDL_Rect sourceRectangle = {10, 10, 32, 32};
+    SDL_Rect sourceRectangle = {
+            static_cast<int>(playerPosition.x),
+            static_cast<int>(playerPosition.y),
+            32,
+            32
+    };
     SDL_RenderCopy(renderer, texture, NULL, &sourceRectangle);
     SDL_DestroyTexture(texture);
 
