@@ -85,8 +85,12 @@ void Game::Update() {
 }
 
 void Game::Render() {
-    // TODO(Skrypak): Implement
     std::cout << "Game render" << std::endl;
+
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderClear(renderer);
+
+    SDL_RenderPresent(renderer);
 }
 
 void Game::Destroy() {
