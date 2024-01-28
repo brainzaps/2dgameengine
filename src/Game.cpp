@@ -7,7 +7,7 @@
 #include "Game.h"
 
 Game::Game() {
-    // TODO(Skrypak): Implement
+    isRunning = false;
     std::cout << "Game constructor" << std::endl;
 }
 
@@ -22,7 +22,7 @@ void Game::Initialize() {
         return;
     }
 
-    SDL_Window *window = SDL_CreateWindow(
+    window = SDL_CreateWindow(
             NULL,
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
@@ -36,23 +36,46 @@ void Game::Initialize() {
         return;
     }
 
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
+    renderer = SDL_CreateRenderer(window, -1, 0);
 
     if (!renderer) {
         std::cerr << "Error creating SDL renderer" << std::endl;
         return;
     }
 
-    std::cout << "Game initialized" << std::endl;
+    isRunning = true;
+
+    std::cout << "Game is initialized" << std::endl;
 }
 
 void Game::Run() {
-    // TODO(Skrypak): Implement
-    std::cout << "Game run" << std::endl;
+    std::cout << "Game is running" << std::endl;
+
+    while (isRunning) {
+        ProcessInput();
+        Update();
+        Render();
+    }
 }
 
 void Game::ProcessInput() {
-    // TODO(Skrypak): Implement
+    SDL_Event event;
+
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
+            case SDL_QUIT: {
+                isRunning = false;
+                break;
+            }
+            case SDL_KEYDOWN: {
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    isRunning = false;
+                }
+                break;
+            }
+        }
+    }
+
     std::cout << "Game process input" << std::endl;
 }
 
@@ -67,6 +90,9 @@ void Game::Render() {
 }
 
 void Game::Destroy() {
-    // TODO(Skrypak): Implement
-    std::cout << "Game destroy" << std::endl;
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    std::cout << "Game is destroyed" << std::endl;
 }
