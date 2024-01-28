@@ -63,7 +63,7 @@ glm::vec2 playerVelocity;
 
 void Game::Setup() {
     playerPosition = glm::vec2(0.0f, 0.0f);
-    playerVelocity = glm::vec2(0.1f, 0.1f);
+    playerVelocity = glm::vec2(100.0f, 0.0f);
 
     std::cout << "Game setup" << std::endl;
 }
@@ -107,9 +107,12 @@ void Game::Update() {
         SDL_Delay(timeToWait);
     }
 
+    double deltaTime = (SDL_GetTicks() - ticksLastFrame) / 1000.0;
+
     ticksLastFrame = SDL_GetTicks();
 
-    playerPosition += playerVelocity;
+    glm::vec2 distance = playerVelocity * static_cast<float>(deltaTime);
+    playerPosition += distance;
 
     std::cout << "Game update" << std::endl;
 }
