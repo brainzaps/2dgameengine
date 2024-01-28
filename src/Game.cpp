@@ -101,7 +101,11 @@ void Game::ProcessInput() {
 
 void Game::Update() {
 
-    while (!SDL_TICKS_PASSED(SDL_GetTicks(), ticksLastFrame + MILLIS_PER_FRAME));
+    int timeToWait = MILLIS_PER_FRAME - (SDL_GetTicks() - ticksLastFrame);
+
+    if (timeToWait > 0 && timeToWait <= MILLIS_PER_FRAME) {
+        SDL_Delay(timeToWait);
+    }
 
     ticksLastFrame = SDL_GetTicks();
 
