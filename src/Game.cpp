@@ -6,21 +6,23 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <glm/glm.hpp>
+
 #include "Game.h"
+#include "Logger.h"
 
 Game::Game() {
     isRunning = false;
-    std::cout << "Game constructor" << std::endl;
+    Logger::Log("Game constructor");
 }
 
 Game::~Game() {
     // TODO(Skrypak): Implement
-    std::cout << "Game destructor" << std::endl;
+    Logger::Log("Game destructor");
 }
 
 void Game::Initialize() {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-        std::cerr << "Error initializing SDL" << std::endl;
+        Logger::Log("Error initializing SDL");
         return;
     }
 
@@ -40,14 +42,14 @@ void Game::Initialize() {
     );
 
     if (!window) {
-        std::cerr << "Error creating SDL window" << std::endl;
+        Logger::Err("Error creating SDL window");
         return;
     }
 
     renderer = SDL_CreateRenderer(window, -1, 0);
 
     if (!renderer) {
-        std::cerr << "Error creating SDL renderer" << std::endl;
+        Logger::Err("Error creating SDL renderer");
         return;
     }
 
@@ -55,7 +57,7 @@ void Game::Initialize() {
 
     isRunning = true;
 
-    std::cout << "Game is initialized" << std::endl;
+    Logger::Log("Game is initialized");
 }
 
 glm::vec2 playerPosition;
@@ -65,7 +67,7 @@ void Game::Setup() {
     playerPosition = glm::vec2(0.0f, 0.0f);
     playerVelocity = glm::vec2(100.0f, 0.0f);
 
-    std::cout << "Game setup" << std::endl;
+    Logger::Log("Game setup");
 }
 
 void Game::Run() {
@@ -96,7 +98,7 @@ void Game::ProcessInput() {
         }
     }
 
-    std::cout << "Game process input" << std::endl;
+    Logger::Log("Game process input");
 }
 
 void Game::Update() {
@@ -114,11 +116,11 @@ void Game::Update() {
     glm::vec2 distance = playerVelocity * static_cast<float>(deltaTime);
     playerPosition += distance;
 
-    std::cout << "Game update" << std::endl;
+    Logger::Log("Game update");
 }
 
 void Game::Render() {
-    std::cout << "Game render" << std::endl;
+    Logger::Log("Game render");
 
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -147,5 +149,5 @@ void Game::Destroy() {
     SDL_DestroyWindow(window);
     SDL_Quit();
 
-    std::cout << "Game is destroyed" << std::endl;
+    Logger::Log("Game is destroyed");
 }
