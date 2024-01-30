@@ -1,8 +1,13 @@
+INCLUDE_PATHS = -I/opt/homebrew/include -L/opt/homebrew/lib -I"./libs/"
+SRC_FILES = ./src/*.cpp ./src/Game/*.cpp ./src/Logger/*.cpp
+LINGER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -l lua5.4
+OBJ_NAME = gameengine
+
 build:
-	g++ -Wall -std=c++17 src/*.cpp -o gameengine -I/opt/homebrew/include -L/opt/homebrew/lib -I"./libs/" -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -l lua5.4
+	g++ -Wall -std=c++17 $(SRC_FILES) -o $(OBJ_NAME) $(INCLUDE_PATHS)  $(LINGER_FLAGS)
 
 run:
-	./gameengine
+	./$(OBJ_NAME)
 
 clean:
-	rm gameengine
+	rm $(OBJ_NAME)
