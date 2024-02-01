@@ -50,7 +50,7 @@ public:
 
     std::vector <Entity> GetEntities() const;
 
-    Signature &GetSignature() const;
+    const Signature &GetSignature() const;
 
     template<typename T>
     void RequireComponent();
