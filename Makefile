@@ -1,5 +1,5 @@
 INCLUDE_PATHS = -I/opt/homebrew/include -L/opt/homebrew/lib -I"./libs/"
-SRC_FILES = ./src/*.cpp ./src/Game/*.cpp ./src/Logger/*.cpp
+SRC_FILES = ./src/*.cpp ./src/Game/*.cpp ./src/Logger/*.cpp ./src/ECS/*.cpp ./src/Components/*.cpp ./src/Systems/*.cpp
 LINGER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -l lua5.4
 OBJ_NAME = gameengine
 
