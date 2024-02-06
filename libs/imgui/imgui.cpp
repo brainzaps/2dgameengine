@@ -3934,7 +3934,7 @@ void ImGui::UpdateDebugToolItemPicker()
         ImGui::SetNextWindowBgAlpha(0.60f);
         ImGui::BeginTooltip();
         ImGui::Text("HoveredId: 0x%08X", hovered_id);
-        ImGui::Text("Press ESC to abort picking.");
+        ImGui::Text("Press ECS to abort picking.");
         ImGui::TextColored(GetStyleColorVec4(hovered_id ? ImGuiCol_Text : ImGuiCol_TextDisabled), "Click to break in debugger!");
         ImGui::EndTooltip();
     }

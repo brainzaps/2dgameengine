@@ -9,6 +9,7 @@
 
 #include "Game.h"
 #include "../Logger/Logger.h"
+#include "../ECS/ECS.h"
 
 Game::Game() {
     isRunning = false;
@@ -60,13 +61,8 @@ void Game::Initialize() {
     Logger::Log("Game is initialized");
 }
 
-glm::vec2 playerPosition;
-glm::vec2 playerVelocity;
 
 void Game::Setup() {
-    playerPosition = glm::vec2(0.0f, 0.0f);
-    playerVelocity = glm::vec2(100.0f, 0.0f);
-
     Logger::Log("Game setup");
 }
 
@@ -113,8 +109,7 @@ void Game::Update() {
 
     ticksLastFrame = SDL_GetTicks();
 
-    glm::vec2 distance = playerVelocity * static_cast<float>(deltaTime);
-    playerPosition += distance;
+    // TODO(Skrypak): do something here
 
     Logger::Log("Game update");
 }
@@ -133,8 +128,8 @@ void Game::Render() {
 
     // Render image
     SDL_Rect sourceRectangle = {
-            static_cast<int>(playerPosition.x),
-            static_cast<int>(playerPosition.y),
+            10,
+            10,
             32,
             32
     };
