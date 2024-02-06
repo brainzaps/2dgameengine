@@ -86,7 +86,7 @@ private:
     int numEntities = 0;
     std::vector<IPool *> componentPools;
 
-    std::vectory <Signature> entityComponentSignatures;
+    std::vector <Signature> entityComponentSignatures;
     std::unordered_map<std::type_index, System *> systems;
 
     std::set <Entity> entitiesToBeAdded;
@@ -132,7 +132,7 @@ public:
         data.clear();
     }
 
-    void Ad(T object) {
+    void Add(T object) {
         data.push_back(object);
     }
 

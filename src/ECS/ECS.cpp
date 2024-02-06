@@ -41,7 +41,4 @@ Entity Registry::CreateEntity() {
 }
 
 void Registry::Update() {
-    if (entityId > entityComponentSignatures.size()) {
-        entityComponentSignatures.resize(entityId + 1);
-    }
 }
