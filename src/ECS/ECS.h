@@ -86,7 +86,7 @@ private:
     int numEntities = 0;
     std::vector<IPool *> componentPools;
 
-    std::vectory <Signature> entityComponentSignatures;
+    std::vector <Signature> entityComponentSignatures;
     std::unordered_map<std::type_index, System *> systems;
 
     std::set <Entity> entitiesToBeAdded;
@@ -101,7 +101,33 @@ public:
 
     void Update();
 
-    void AddEntityToSystem(Entity entity);
+    // Components management
+
+    template<typename T, typename ...TArgs>
+    void AddComponent(Entity entity, TArgs &&...args);
+
+    template<typename T>
+    void RemoveComponent(Entity entity);
+
+    template<typename T>
+    bool HasComponent(Entity entity) const;
+
+    // Systems management
+
+    template<typename T, typename ...TArgs>
+    void AddSystem(TArgs &&...args);
+
+    template<typename T>
+    void RemoveSystem();
+
+    template<typename T>
+    T &GetSystem() const;
+
+    template<typename T>
+    bool HasSystem() const;
+
+
+    void AddEntityToSystems(Entity entity);
 };
 
 
@@ -132,7 +158,7 @@ public:
         data.clear();
     }
 
-    void Ad(T object) {
+    void Add(T object) {
         data.push_back(object);
     }
 
@@ -155,5 +181,69 @@ void System::RequireComponent() {
     signature.set(componentId);
 }
 
+template<typename T, typename ...TArgs>
+void Registry::AddComponent(Entity entity, TArgs &&...args) {
+    const int componentId = Component<T>::GetId();
+    const int entityId = entity.GetId();
 
 
+    if (componentPools.size() <= componentId) {
+        componentPools.resize(componentId + 1, nullptr);
+    }
+
+    if (componentPools[componentId] == nullptr) {
+        Pool<T> *pool = new Pool<T>();
+        componentPools[componentId] = pool;
+    }
+
+    Pool<T> *pool = componentPools[componentId];
+
+    if (entityId >= pool->GetSize()) {
+        pool->Resize(entityId + 1);
+    }
+
+    T newComponent(std::forward<TArgs>(args)...);
+
+    pool->Set(entityId, newComponent);
+
+    entityComponentSignatures[entityId].set(componentId);
+}
+
+template<typename T>
+void Registry::RemoveComponent(Entity entity) {
+    const int componentId = Component<T>::GetId();
+    const int entityId = entity.GetId();
+
+    entityComponentSignatures[entityId].set(componentId, false);
+}
+
+template<typename T>
+bool Registry::HasComponent(Entity entity) const {
+    const int componentId = Component<T>::GetId();
+    const int entityId = entity.GetId();
+
+    return entityComponentSignatures[entityId].test(componentId);
+}
+
+template<typename T, typename ...TArgs>
+void Registry::AddSystem(TArgs &&...args) {
+    T *system = new T(std::forward<TArgs>(args)...);
+    systems.insert(std::make_pair(std::type_index(typeid(T)), system));
+}
+
+template<typename T>
+void Registry::RemoveSystem() {
+    auto system = systems.find(std::type_index(typeid(T)));
+    systems.erase(system);
+}
+
+template<typename T>
+T &Registry::GetSystem() const {
+    auto system = systems.find(std::type_index(typeid(T)));
+    return *static_cast<T *>(system->second);
+}
+
+template<typename T>
+bool Registry::HasSystem() const {
+    return systems.find(std::type_index(typeid(T))) != systems.end();
+}
