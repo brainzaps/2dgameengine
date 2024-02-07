@@ -104,6 +104,12 @@ public:
     template<typename T, typename ...TArgs>
     void AddComponent(Entity entity, TArgs &&...args);
 
+    template<typename T>
+    void RemoveComponent(Entity entity);
+
+    template<typename T>
+    bool HasComponent(Entity entity);
+
 };
 
 
@@ -185,4 +191,18 @@ void Registry::AddComponent(Entity entity, TArgs &&...args) {
     entityComponentSignatures[entityId].set(componentId);
 }
 
+template<typename T>
+void Registry::RemoveComponent(Entity entity) {
+    const int componentId = Component<T>::GetId();
+    const int entityId = entity.GetId();
 
+    entityComponentSignatures[entityId].set(componentId, false);
+}
+
+template<typename T>
+bool Registry::HasComponent(Entity entity) {
+    const int componentId = Component<T>::GetId();
+    const int entityId = entity.GetId();
+
+    return entityComponentSignatures[entityId].test(componentId);
+}
