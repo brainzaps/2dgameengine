@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <typeindex>
 #include <set>
+#include <memory>
 
 const unsigned int MAX_COMPONENTS = 32;
 
@@ -84,10 +85,10 @@ public:
 class Registry {
 private:
     int numEntities = 0;
-    std::vector<IPool *> componentPools;
+    std::vector <std::shared_ptr<IPool>> componentPools;
 
     std::vector <Signature> entityComponentSignatures;
-    std::unordered_map<std::type_index, System *> systems;
+    std::unordered_map <std::type_index, std::shared_ptr<System>> systems;
 
     std::set <Entity> entitiesToBeAdded;
     std::set <Entity> entitiesToBeKilled;
@@ -192,11 +193,11 @@ void Registry::AddComponent(Entity entity, TArgs &&...args) {
     }
 
     if (componentPools[componentId] == nullptr) {
-        Pool<T> *pool = new Pool<T>();
+        std::shared_ptr <Pool<T>> pool = std::make_shared<Pool<T>>();
         componentPools[componentId] = pool;
     }
 
-    Pool<T> *pool = componentPools[componentId];
+    std::shared_ptr <Pool<T>> pool = std::static_pointer_cast<Pool<T>>(componentPools[componentId]);
 
     if (entityId >= pool->GetSize()) {
         pool->Resize(entityId + 1);
@@ -227,7 +228,7 @@ bool Registry::HasComponent(Entity entity) const {
 
 template<typename T, typename ...TArgs>
 void Registry::AddSystem(TArgs &&...args) {
-    T *system = new T(std::forward<TArgs>(args)...);
+    std::shared_ptr <T> system = std::make_shared<T>(std::forward<TArgs>(args)...);
     systems.insert(std::make_pair(std::type_index(typeid(T)), system));
 }
 

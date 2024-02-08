@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <glm/glm.hpp>
+#include <memory>
 
 #include "Game.h"
 #include "../Logger/Logger.h"
@@ -13,6 +14,7 @@
 
 Game::Game() {
     isRunning = false;
+    registry = std::make_unique<Registry>();
     Logger::Log("Game constructor");
 }
 
@@ -64,6 +66,9 @@ void Game::Initialize() {
 
 void Game::Setup() {
     Logger::Log("Game setup");
+
+    Entity tank = registry->CreateEntity();
+    Entity track = registry->CreateEntity();
 }
 
 void Game::Run() {
@@ -93,8 +98,6 @@ void Game::ProcessInput() {
             }
         }
     }
-
-    Logger::Log("Game process input");
 }
 
 void Game::Update() {
@@ -108,14 +111,9 @@ void Game::Update() {
     double deltaTime = (SDL_GetTicks() - ticksLastFrame) / 1000.0;
 
     ticksLastFrame = SDL_GetTicks();
-
-    // TODO(Skrypak): do something here
-
-    Logger::Log("Game update");
 }
 
 void Game::Render() {
-    Logger::Log("Game render");
 
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderClear(renderer);
