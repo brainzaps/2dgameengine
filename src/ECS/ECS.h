@@ -31,6 +31,7 @@ public:
     }
 };
 
+
 class Entity {
 private:
     int id;
@@ -38,6 +39,20 @@ public:
     Entity(int id) : id(id) {}
 
     int GetId() const;
+
+    class Registry *registry;
+
+    template<typename T, typename ...TArgs>
+    void AddComponent(TArgs &&...args);
+
+    template<typename T>
+    void RemoveComponent();
+
+    template<typename T>
+    bool HasComponent() const;
+
+    template<typename T>
+    T &GetComponent() const;
 
     bool operator==(const Entity &other) const {
         return id == other.id;
@@ -113,6 +128,9 @@ public:
 
     template<typename T>
     bool HasComponent(Entity entity) const;
+
+    template<typename T>
+    T &GetComponent(Entity entity) const;
 
     // Systems management
 
@@ -248,4 +266,34 @@ T &Registry::GetSystem() const {
 template<typename T>
 bool Registry::HasSystem() const {
     return systems.find(std::type_index(typeid(T))) != systems.end();
+}
+
+template<typename T>
+T &Registry::GetComponent(Entity entity) const {
+    const int componentId = Component<T>::GetId();
+    const int entityId = entity.GetId();
+
+    std::shared_ptr <Pool<T>> pool = std::static_pointer_cast<Pool<T>>(componentPools[componentId]);
+
+    return pool->Get(entityId);
+}
+
+template<typename T, typename ...TArgs>
+void Entity::AddComponent(TArgs &&...args) {
+    registry->AddComponent<T>(*this, std::forward<TArgs>(args)...);
+}
+
+template<typename T>
+void Entity::RemoveComponent() {
+    registry->RemoveComponent<T>(*this);
+}
+
+template<typename T>
+bool Entity::HasComponent() const {
+    return registry->HasComponent<T>(*this);
+}
+
+template<typename T>
+T &Entity::GetComponent() const {
+    return registry->GetComponent<T>(*this);
 }
