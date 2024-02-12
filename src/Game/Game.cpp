@@ -11,6 +11,8 @@
 #include "Game.h"
 #include "../Logger/Logger.h"
 #include "../ECS/ECS.h"
+#include "../Components/TransformComponent.h"
+#include "../Components/RigidBodyComponent.h"
 
 Game::Game() {
     isRunning = false;
@@ -68,7 +70,9 @@ void Game::Setup() {
     Logger::Log("Game setup");
 
     Entity tank = registry->CreateEntity();
-    Entity track = registry->CreateEntity();
+
+    registry->AddComponent<TransformComponent>(tank, glm::vec2(0, 0), glm::vec2(32, 32), 0.0);
+    registry->AddComponent<RigidBodyComponent>(tank, glm::vec2(50, 0));
 }
 
 void Game::Run() {
