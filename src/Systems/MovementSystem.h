@@ -16,12 +16,12 @@ public:
         RequireComponent<RigidBodyComponent>();
     }
 
-    void Update() {
+    void Update(double deltaTime) {
         for (Entity entity: GetEntities()) {
             auto &transform = entity.GetComponent<TransformComponent>();
             const auto rigidBody = entity.GetComponent<RigidBodyComponent>();
 
-            transform.position += rigidBody.velocity;
+            transform.position += (rigidBody.velocity * static_cast<float>(deltaTime));
 
             Logger::Log("Entity moved to: " + std::to_string(transform.position.x) + ", " +
                         std::to_string(transform.position.y));

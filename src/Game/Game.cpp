@@ -100,7 +100,7 @@ void Game::Update() {
     registry->Update();
 
     // Ask all the systems to update
-    registry->GetSystem<MovementSystem>().Update();
+    registry->GetSystem<MovementSystem>().Update(deltaTime);
 }
 
 void Game::Render() {
