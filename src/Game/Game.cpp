@@ -12,8 +12,10 @@
 #include "../Logger/Logger.h"
 #include "../ECS/ECS.h"
 #include "../Components/TransformComponent.h"
+#include "../Components/SpriteComponent.h"
 #include "../Components/RigidBodyComponent.h"
 #include "../Systems/MovementSystem.h"
+#include "../Systems/RenderSystem.h"
 
 Game::Game() {
     isRunning = false;
@@ -74,6 +76,7 @@ void Game::ProcessInput() {
 void Game::Setup() {
     // Add the systems that need to be processed in our game
     registry->AddSystem<MovementSystem>();
+    registry->AddSystem<RenderSystem>();
 
     // Create an entity
     Entity tank = registry->CreateEntity();
@@ -81,6 +84,7 @@ void Game::Setup() {
     // Add some components to that entity
     tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
     tank.AddComponent<RigidBodyComponent>(glm::vec2(10.0, 50.0));
+    tank.AddComponent<SpriteComponent>(10, 10);
 }
 
 void Game::Update() {
@@ -107,7 +111,7 @@ void Game::Render() {
     SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
     SDL_RenderClear(renderer);
 
-    // TODO: Render game objects...
+    registry->GetSystem<RenderSystem>().Update(renderer);
 
     SDL_RenderPresent(renderer);
 }
