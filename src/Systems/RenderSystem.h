@@ -5,11 +5,13 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <memory>
 
 #include "../ECS/ECS.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/SpriteComponent.h"
 #include "../Logger/Logger.h"
+#include "../AssetStore/AssetStore.h"
 
 class RenderSystem : public System {
 public:
@@ -18,21 +20,29 @@ public:
         RequireComponent<SpriteComponent>();
     }
 
-    void Update(SDL_Renderer *renderer) {
+    void Update(SDL_Renderer *renderer, std::unique_ptr <AssetStore> &assetStore) {
         for (Entity entity: GetEntities()) {
             auto transform = entity.GetComponent<TransformComponent>();
             const auto sprite = entity.GetComponent<SpriteComponent>();
 
+            auto asset = assetStore->GetTexture(sprite.assetId);
 
-            SDL_Rect objRect = {
+            SDL_Rect dstRect = {
                     static_cast<int>(transform.position.x),
                     static_cast<int>(transform.position.y),
-                    sprite.width,
-                    sprite.height
+                    static_cast<int>(sprite.width * transform.scale.x),
+                    static_cast<int>(sprite.height * transform.scale.y)
             };
 
-            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-            SDL_RenderFillRect(renderer, &objRect);
+            SDL_RenderCopyEx(
+                    renderer,
+                    asset,
+                    &sprite.srcRect,
+                    &dstRect,
+                    transform.rotation,
+                    NULL,
+                    SDL_FLIP_NONE
+            );
         }
     }
 };
