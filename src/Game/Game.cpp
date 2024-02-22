@@ -1,19 +1,16 @@
-//
-// Created by Konstantin Skrypak on 28.01.2024.
-//
-
-#include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <glm/glm.hpp>
-#include <memory>
+#include <iostream>
+#include <fstream>
 
 #include "Game.h"
+
 #include "../Logger/Logger.h"
 #include "../ECS/ECS.h"
 #include "../Components/TransformComponent.h"
-#include "../Components/SpriteComponent.h"
 #include "../Components/RigidBodyComponent.h"
+#include "../Components/SpriteComponent.h"
 #include "../Systems/MovementSystem.h"
 #include "../Systems/RenderSystem.h"
 
@@ -74,30 +71,56 @@ void Game::ProcessInput() {
     }
 }
 
-void Game::Setup() {
-    // Add the systems that need to be processed in our game
+void Game::LoadLevel(int level) {
+    // Add the sytems that need to be processed in our game
     registry->AddSystem<MovementSystem>();
     registry->AddSystem<RenderSystem>();
 
-    // Add some textures to the asset store
-    assetStore->AddTexture(renderer, "tank", "./assets/images/tank-panther-right.png");
-    assetStore->AddTexture(renderer, "truck", "./assets/images/truck-ford-right.png");
+    // Adding assets to the asset store
+    assetStore->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
+    assetStore->AddTexture(renderer, "truck-image", "./assets/images/truck-ford-right.png");
+    assetStore->AddTexture(renderer, "tilemap-image", "./assets/tilemaps/jungle.png");
+
+    // Load the tilemap
+    int tileSize = 32;
+    double tileScale = 2.0;
+    int mapNumCols = 25;
+    int mapNumRows = 20;
+
+    std::fstream mapFile;
+    mapFile.open("./assets/tilemaps/jungle.map");
+
+    for (int y = 0; y < mapNumRows; y++) {
+        for (int x = 0; x < mapNumCols; x++) {
+            char ch;
+            mapFile.get(ch);
+            int srcRectY = std::atoi(&ch) * tileSize;
+            mapFile.get(ch);
+            int srcRectX = std::atoi(&ch) * tileSize;
+            mapFile.ignore();
+
+            Entity tile = registry->CreateEntity();
+            tile.AddComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)),
+                                                  glm::vec2(tileScale, tileScale), 0.0);
+            tile.AddComponent<SpriteComponent>("tilemap-image", tileSize, tileSize, 0, srcRectX, srcRectY);
+        }
+    }
+    mapFile.close();
 
     // Create an entity
     Entity tank = registry->CreateEntity();
-
-    // Add some components to that entity
-    tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
-    tank.AddComponent<RigidBodyComponent>(glm::vec2(10.0, 50.0));
-    tank.AddComponent<SpriteComponent>("tank", 32, 32);
-
+    tank.AddComponent<TransformComponent>(glm::vec2(10.0, 10.0), glm::vec2(1.0, 1.0), 0.0);
+    tank.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 0.0));
+    tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 1);
 
     Entity truck = registry->CreateEntity();
-
-    // Add some components to that entity
-    truck.AddComponent<TransformComponent>(glm::vec2(50.0, 0.0), glm::vec2(1.0, 1.0), 0.0);
+    truck.AddComponent<TransformComponent>(glm::vec2(50.0, 100.0), glm::vec2(1.0, 1.0), 0.0);
     truck.AddComponent<RigidBodyComponent>(glm::vec2(20.0, 0.0));
-    truck.AddComponent<SpriteComponent>("truck", 32, 32);
+    truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 2);
+}
+
+void Game::Setup() {
+    LoadLevel(1);
 }
 
 void Game::Update() {
@@ -116,7 +139,7 @@ void Game::Update() {
     // Update the registry to process the entities that are waiting to be created/deleted
     registry->Update();
 
-    // Ask all the systems to update
+    // Invoke all the systems that need to update
     registry->GetSystem<MovementSystem>().Update(deltaTime);
 }
 
@@ -124,6 +147,7 @@ void Game::Render() {
     SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
     SDL_RenderClear(renderer);
 
+    // Invoke all the systems that need to render
     registry->GetSystem<RenderSystem>().Update(renderer, assetStore);
 
     SDL_RenderPresent(renderer);

@@ -42,6 +42,8 @@ public:
 
     void Destroy();
 
+    void LoadLevel(int level);
+
     int windowWidth;
     int windowHeight;
 };
