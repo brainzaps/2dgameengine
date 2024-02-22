@@ -22,7 +22,7 @@ public:
             SpriteComponent spriteComponent;
         };
         std::vector <RenderableEntity> renderableEntities;
-        for (auto entity: GetSystemEntities()) {
+        for (auto entity: GetEntities()) {
             RenderableEntity renderableEntity;
             renderableEntity.spriteComponent = entity.GetComponent<SpriteComponent>();
             renderableEntity.transformComponent = entity.GetComponent<TransformComponent>();
