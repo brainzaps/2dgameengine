@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "ECS.h"
+#include <algorithm>
 #include "../Logger/Logger.h"
 
 int IComponent::nextId = 0;
@@ -45,7 +46,7 @@ Entity Registry::CreateEntity() {
         entityComponentSignatures.resize(entityId + 1);
     }
 
-    Logger::Log("Entity created with id = " + std::to_string(entityId));
+    Logger::Log("Entity created with id " + std::to_string(entityId));
 
     return entity;
 }
